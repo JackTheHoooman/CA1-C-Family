@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 
-gcc -ansi -c ${1} -o ${1}.o
+gcc -ansi -c ${1}.c -o ${1}.o
 gcc ${1}.o -o ${1}
