@@ -1,4 +1,20 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 gcc -ansi -c ${1}.c -o ${1}.o
 gcc ${1}.o -o ${1}
+
+# Why are you looking in here? 0.o
+# For development I used this:
+# 
+# function compile () {
+  # if [[ "${1}" != *.c ]] && [[ "${1}" != *.o ]]; then
+    # gcc -ansi -c ${1}.c -o ${1}.o
+    # gcc ${1}.o -o ${1}
+  # else 
+    # echo "You left the .c/o on again"
+    # gcc -ansi -c ${1:0:-2}.c -o ${1:0:-2}.o
+    # gcc ${1:0:-2}.o -o ${1:0:-2}
+  # fi
+# }
+#
+# I kept using autocomplete, which added the .c
