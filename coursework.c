@@ -60,6 +60,15 @@ int main (int argc, char **argv) {
         printf("Wrong number of arguments for task 2. At least 2 should be provided\n");
     }
 
+
+
+
+
+    printf("\n--- Task 3 ---\n");
+
+
+
+
     return 0;
 }
 
