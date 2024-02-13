@@ -41,19 +41,21 @@ int main (int argc, char **argv) {
 
 
     printf("\n--- Task 2 ---\n");
-    if (argc >= 2) {
-        printf("In here");
-        /*printf("Input file is : '%s' \nOutput file is : '%s'\n\n", argv[1], argv[2]);*/
+    if (argc == 3) {
+        printf("Input file is : '%s' \nOutput file is : '%s'\n\n", argv[1], argv[2]);
     
-        /*reverseFile(&argv[1], &argv[2]);*/
-    } else if (argc >= 3) {
+        reverseFile(&argv[1], &argv[2]);
+
+    } else if (argc >= 4) {
         int chunkSize;
         if (sscanf (argv[3], "%i", &chunkSize) != 1 || chunkSize < 1) {
             perror("Chunk size input is not an int or is too small");
             exit(1);
         } else {
+            printf("Input file is : '%s' \nOutput file is : '%s'\n\n", argv[1], argv[2]);
             reverseFileByChunk(&argv[1], &argv[2], chunkSize);
         }
+
     } else {
         printf("Wrong number of arguments for task 2. At least 2 should be provided\n");
     }
@@ -70,7 +72,8 @@ void printBytes(void *ptr, int numBytes) {
 
     int i;
     for (i=1; i<=numBytes; i++) {
-        printf("%03d: %4hhu (%c)\n", i, *(char*)ptr,*(char*)ptr); 
+        /*printf("%03d: %4hhu (%c)\n", i, *(char*)ptr,*(char*)ptr); */
+        printf("%03d: %4hhu\n", i, *(char*)ptr); 
         /* ^^ The return format type is not defined so I used unsigned char */
         ptr += 1;
     }
