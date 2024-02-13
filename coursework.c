@@ -2,10 +2,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEFAULT_CHUNK_SIZE 2048
+#ifndef DEFAULT_CHUNK_SIZE 
+#define DEFAULT_CHUNK_SIZE 2048 
+#endif
 /* 
 To allow for large files, they are read in chunks. This is the used size. 
-It also prevents many small IO operations by grouping them, which i assume is more efficient.
+It also prevents many small IO operations by grouping them.
+I thought it was more interesting than malloc for an array of the file size.
+
+I have tested it with files up to 5gb on a poor raspberry pi. 
+Use head / tail to view a file like that. Do not use vim, i learnt the hard way.
+Also change the block/chunk size if you do.
 */
 
 
@@ -51,16 +58,21 @@ int main (int argc, char **argv) {
         if (sscanf (argv[3], "%i", &chunkSize) != 1 || chunkSize < 1) {
             perror("Chunk size input is not an int or is too small");
             exit(1);
+            /* 
+            This provides more error information than the example used in lecture. 
+            It also works still with:
+            $ ./coursework infile.txt outfile.txt >output.lis 2>err.lis as required.
+            Since is does send error messages to sterr.
+            */
         } else {
             printf("Input file is : '%s' \nOutput file is : '%s'\n\n", argv[1], argv[2]);
             reverseFileByChunk(&argv[1], &argv[2], chunkSize);
         }
 
     } else {
-        printf("Wrong number of arguments for task 2. At least 2 should be provided\n");
+        perror("Wrong number of arguments for task 2. At least 2 should be provided");
+        exit(1);
     }
-
-
 
 
 
