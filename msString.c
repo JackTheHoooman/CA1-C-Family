@@ -55,9 +55,40 @@ long int msLength(msString ptr) {
   return *(long *)ptr;
 }
 
-int msCompare(msString string1, msString string2) { return 1; }
+int msCompare(msString ptr1, msString ptr2) {
+  long int i;
+  if (msLength(ptr1) != msLength(ptr2)) {
+    return 1;
+  }
 
-int msCompareString(msString string1, char *string2) { return 1; }
+  char *ptr1Str = ptr1 + sizeof(long);
+  char *ptr2Str = ptr2 + sizeof(long);
+
+  for (i = 0; i <= msLength(ptr1); i++) {
+    if (*(ptr1Str+i) != *(ptr2Str+i)) {
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+int msCompareString(msString ptr, char *str) {
+  long int ptrLen = msLength(ptr);
+  if (strlen(str) != ptrLen) {
+    return 1;
+  }
+
+  char *ptrStr = ptr + sizeof(long);
+  long int i;
+  for (i = 0; i <= ptrLen; i++) {
+    if (*(ptrStr+i) != *(str+i)) {
+      return 1;
+    }
+  }
+
+  return 0;
+}
 
 void msError(char *errMsg) {
   fprintf(stderr, "Err:%s\n", errMsg);

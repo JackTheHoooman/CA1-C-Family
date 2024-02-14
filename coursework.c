@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
   msString mscopy = NULL;
 
   char *tempString = msGetString(ms);
-  printf(" String |%s| is %li characters long (%p).\n ", tempString,
+  printf("String        (ms) |%s| is %li characters long (%p).\n", tempString,
          msLength(ms), &ms);
   free(tempString);
   /*
@@ -92,16 +92,26 @@ int main(int argc, char **argv) {
 
   msCopy(&mscopy, ms);
   tempString = msGetString(mscopy);
-  printf(" Copied string |%s| is %li characters long (%p).\n ", tempString,
-         msLength(mscopy), mscopy);
+  printf("Copied string (mscopy) |%s| is %li characters long (%p).\n",
+         tempString, msLength(mscopy), mscopy);
   free(tempString);
 
-  printf(" Compare ms with mscopy : %li \n ", msCompare(ms, mscopy));
+  tempString = msGetString(ms2);
+  printf("Second string (ms2) |%s| is %li characters long (%p) \n", tempString,
+         msLength(ms2), ms2);
+  free(tempString);
+
+  printf("Compare ms with mscopy : %s \n",
+         (msCompare(ms, mscopy) ? "True" : "False"));
+  printf("Compare ms with ms2 : %s \n",
+         (msCompare(ms, ms2) ? "True" : "False"));
+  printf("Compare ms with Hello : %s \n",
+         (msCompareString(ms, "Hello")) ? "True" : "False");
+  printf("Compare ms with HelloX : %s \n",
+         (msCompareString(ms, "HelloX") ? "True" : "False"));
+  printf("Compare ms with Hella : %s \n",
+         (msCompareString(ms, "Hella") ? "True" : "False"));
   /*
-  printf(" Compare ms with ms2 : %li \n ", msCompare(ms, ms2));
-  printf(" Compare ms with Hello : %li \n ", msCompareString(ms, " Hello "));
-  printf(" Compare ms with HelloX : %li \n ", msCompareString(ms, " HelloX "));
-  printf(" Compare ms with Hella : %li \n ", msCompareString(ms, " Hella "));
 
   msConcatenate(&mscopy, ms2);
   tempString = msGetString(mscopy);
