@@ -15,6 +15,7 @@ msString msSetString(char *str) {
   /*
   I would use structs, however the requirements say that it
   should point to long int, char[] instead of long int, *char, char[]:
+  and I am not sure what happens with char str[] in a struct but it lets me do it
 
   struct msStringStruct {
     long int len;
@@ -64,11 +65,16 @@ void msConcatenate(msString *dest, msString ptr2) {
     msError("Error in memmory allocation");
   }
 
+  /*
+  copy int 
+  copy first string  ( after int end)
+  copy second string (after previous end)
+  */
   memcpy(newStr, &len, sizeof(long));
   memcpy((newStr + sizeof(long)), (*dest + sizeof(long)), destLen);
   memcpy((newStr + sizeof(long) + destLen), (ptr2 + sizeof(long)), ptr2Len);
 
-  free(*dest);
+  free(*dest); /* The possible memory leak mentioned in main */
   *dest = newStr;
 }
 
@@ -80,9 +86,11 @@ int msCompare(msString ptr1, msString ptr2) {
     return 1;
   }
 
+  /* Getting the start of the strings */
   char *ptr1Str = ptr1 + sizeof(long);
   char *ptr2Str = ptr2 + sizeof(long);
 
+  /* Check each char */
   for (i = 0; i <= msLength(ptr1); i++) {
     if (*(ptr1Str + i) != *(ptr2Str + i)) {
       return 1;
@@ -94,12 +102,15 @@ int msCompare(msString ptr1, msString ptr2) {
 
 int msCompareString(msString ptr, char *str) {
   long int ptrLen = msLength(ptr);
+
   if (strlen(str) != ptrLen) {
     return 1;
   }
 
+  /* Start of string bytes */
   char *ptrStr = ptr + sizeof(long);
-  long int i;
+
+  long int i; /* Check each char */
   for (i = 0; i <= ptrLen; i++) {
     if (*(ptrStr + i) != *(str + i)) {
       return 1;

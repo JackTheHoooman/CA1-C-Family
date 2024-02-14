@@ -10,12 +10,15 @@
 /*
 To allow for large files and decrease IO opertations: they are read in chunks.
 I thought it would be more interesting than doing it char by char / reading the
-entire thing but that functionality can be done by this i guess?
+entire thing but both of those can be done by this i guess?
 
-I have tested it with files up to 5gb (with multiple lines) on a poor raspberry
-pi. Use head/tail to view a file like that. Do not use vim, i learnt the hard
-way. Also change the block/chunk size if you do or it will take a while.
+I have tested it with files up to 5gb on a poor raspberry pi.
+Use head/tail to view a file like that. Do not use vim, i learnt the hard way.
+Larger block size is much faster if that is attempted.
 */
+
+
+
 
 void printBytes(void *ptr, int numBytes);
 
@@ -25,10 +28,12 @@ void reverseFile(char *inFile[],
                  char *outFile[]); /* Calls reverseFileByChunk */
 void reverseFileByChunk(char *inFile[], char *outFile[], int chunkSize);
 
+
+
+
 int main(int argc, char **argv) {
+
   printf("--- Task 1 ---\n");
-  /* "You should call that function with a couple of different
-  values from within the main function." */
 
   unsigned char test1[5] = {10, 20, 30, 145, 5};
   printBytes(&test1, 4);
@@ -45,42 +50,47 @@ int main(int argc, char **argv) {
   reverseArrayC(test3, 6);
   printBytes(&test3, 6); */
 
+
+
   printf("\n--- Task 2 ---\n");
+
   if (argc == 3) {
-    printf("Input file is : '%s' \nOutput file is : '%s'\n\n", argv[1],
-           argv[2]);
+    printf("Input file is : '%s' \nOutput file is : '%s'\n\n", 
+          argv[1], argv[2]);
 
     reverseFile(&argv[1], &argv[2]);
 
   } else if (argc >= 4) {
     int chunkSize;
-    if (sscanf(argv[3], "%i", &chunkSize) != 1 || chunkSize < 1) {
-      fprintf(stderr, "Error with chunk size on line %d\nError : %d :\n%s", __LINE__, errno,
-              strerror(errno));
+    if (sscanf(argv[3], "%i", &chunkSize) != 1 && chunkSize < 1) {
+      fprintf(stderr, "Error with chunk size on line %d", 
+              __LINE__, errno, strerror(errno));
       exit(1);
+
     } else {
-      printf("Input file is : '%s' \nOutput file is : '%s'\n\n", argv[1],
-             argv[2]);
+      printf("Input file is : '%s' \nOutput file is : '%s'\n\n", 
+              argv[1], argv[2]);
       reverseFileByChunk(&argv[1], &argv[2], chunkSize);
     }
 
   } else {
-    fprintf(stderr,
-            "Wrong number of arguments for task 2. Either use:\n"
-            "- %s inFile outFile\n"
-            "- %s inFile outFile chunkSize(bytes)\n",
-            argv[0], argv[0]);
+    fprintf(stderr, "Wrong number of arguments for task 2. Either use:\n"
+          "- %s inFile outFile\n"
+          "- %s inFile outFile chunkSize(bytes)\n",
+          argv[0], argv[0]);
   }
+
+
 
   printf("\n--- Task 3 ---\n");
 
   msString ms = msSetString("Hello");
-  msString ms2 = msSetString("World!");
+  msString ms2 = msSetString(" World!");
   msString mscopy = NULL;
 
   char *tempString = msGetString(ms);
-  printf("String        (ms) |%s| is %li characters long (%p).\n", tempString,
-         msLength(ms), &ms);
+  printf("String        (ms) |%s| is %li characters long (%p).\n", 
+          tempString, msLength(ms), &ms);
   free(tempString);
   /*
   Since msGetString must use malloc to create a char[] with a null char
@@ -94,34 +104,33 @@ int main(int argc, char **argv) {
   free(tempString);
 
   tempString = msGetString(ms2);
-  printf("Second string (ms2) |%s| is %li characters long (%p) \n", tempString,
-         msLength(ms2), ms2);
+  printf("Second string (ms2) |%s| is %li characters long (%p) \n", 
+          tempString, msLength(ms2), ms2);
   free(tempString);
 
-  printf("Compare ms with mscopy : %s \n",
-         (msCompare(ms, mscopy) ? "False (1)" : "True (0)"));
+  printf("Compare ms with mscopy : %s \n", (msCompare(ms, mscopy) ? "False (1)" : "True (0)"));
   /*printf("Compare ms with mscopy : %d \n",msCompare(ms, mscopy));*/
-  printf("Compare ms with ms2 : %s \n",
-         (msCompare(ms, ms2) ? "False (1)" : "True (0)"));
-  printf("Compare ms with Hello : %s \n",
-         (msCompareString(ms, "Hello")) ? "False (1)" : "True (0)");
-  printf("Compare ms with HelloX : %s \n",
-         (msCompareString(ms, "HelloX") ? "False (1)" : "True (0)"));
-  printf("Compare ms with Hella : %s \n",
-         (msCompareString(ms, "Hella") ? "False (1)" : "True (0)"));
+  printf("Compare ms with ms2 : %s \n", (msCompare(ms, ms2) ? "False (1)" : "True (0)"));
+  printf("Compare ms with Hello : %s \n", (msCompareString(ms, "Hello")) ? "False (1)" : "True (0)");
+  printf("Compare ms with HelloX : %s \n",(msCompareString(ms, "HelloX") ? "False (1)" : "True (0)"));
+  printf("Compare ms with Hella : %s \n", (msCompareString(ms, "Hella") ? "False (1)" : "True (0)"));
 
   msConcatenate(&mscopy, ms2);
+  /* Possible memory leak handeled in here */
   tempString = msGetString(mscopy);
   printf("Concatenated string |%s| is %li characters long (%p).\n ", tempString,
          msLength(mscopy), mscopy);
-
   free(tempString);
+
   free(ms);
   free(ms2);
   free(mscopy);
 
   return 0;
 }
+
+
+
 
 void printBytes(void *ptr, int numBytes) {
   printf("Starting at memory address %p:\n", ptr);
@@ -130,10 +139,11 @@ void printBytes(void *ptr, int numBytes) {
   for (i = 1; i <= numBytes; i++) {
     /*printf("%03d: %4hhu (%c)\n", i, *(char*)ptr,*(char*)ptr); */
     printf("%03d: %4hhu\n", i, *(char *)ptr);
-    /* ^^ The return format type is not defined so I used unsigned char */
     ptr += 1;
   }
 }
+
+
 
 void reverseArrayC(char *arr, int len) {
   int i = len - 1; /* End index */
@@ -148,9 +158,7 @@ void reverseArrayC(char *arr, int len) {
   }
 }
 
-void reverseFile(char *inFile[],
-                 char *outFile[]) { /* NOTE: These are references since there is
-                                       no point copying the entiire string */
+void reverseFile(char *inFile[], char *outFile[]) {
   reverseFileByChunk(inFile, outFile, DEFAULT_CHUNK_SIZE);
 }
 
@@ -160,8 +168,8 @@ void reverseFileByChunk(char *inFile[], char *outFile[], int chunkSize) {
 
   if (inFStrseam == NULL || outFStream == NULL) {
     /* The lack of standardisation with C errors is ridiculous */
-    fprintf(stderr, "Error opening files on line %d\nError : %d :\n%s", __LINE__, errno,
-            strerror(errno));
+    fprintf(stderr, "Error opening files on line %d", 
+            __LINE__, errno, strerror(errno));
     exit(EXIT_FAILURE);
   }
 
@@ -169,23 +177,23 @@ void reverseFileByChunk(char *inFile[], char *outFile[], int chunkSize) {
         SEEK_END); /* Puts the pointer/cursor at the end of the file */
   long position = ftell(inFStrseam); /* Gets location of cursor */
 
-  printf("File is %li bytes long, proceeding with a chunk size of %i (%li "
+  printf("File is %li bytes long, proceeding with a chunk size of %li (%li "
          "chunks)\n",
-         position, chunkSize, ((position + (chunkSize - 1)) / chunkSize));
+         position, (position < chunkSize ? position : chunkSize),
+         ((position + (chunkSize - 1)) / chunkSize));
 
   char *chunk;
   if (!(chunk = (char *)malloc(position < chunkSize ? position : chunkSize))) {
-    fprintf(stderr, "Error in assignment of chunk on line %d\nError : %d :\n%s", __LINE__, errno,
-            strerror(errno));
+    fprintf(stderr, "Error in assignment of chunk on line %d", 
+            __LINE__, errno, strerror(errno));
     exit(EXIT_FAILURE);
   }
 
   while (position > 0) { /* Position is used as the chunk end index */
     int currentChunkSize = position < chunkSize ? position : chunkSize;
 
-    fseek(inFStrseam, position - currentChunkSize,
-          SEEK_SET); /* Go to SEEK_SET+(position-crntChnkSze), SEEK_SET : File
-                        start pos */
+    fseek(inFStrseam, position - currentChunkSize, SEEK_SET); 
+    /* Go to SEEK_SET+(position-crntChnkSze), SEEK_SET : File start pos */
     int bytesRead = fread(chunk, 1, currentChunkSize, inFStrseam);
 
     /*printBytes(chunk, currentChunkSize);*/
@@ -195,8 +203,8 @@ void reverseFileByChunk(char *inFile[], char *outFile[], int chunkSize) {
     int bytesWritten = fwrite(chunk, 1, bytesRead, outFStream);
 
     if (bytesRead != bytesWritten) {
-      fprintf(stderr, "Error in file read/write on line %d\nError : %d :\n%s", __LINE__, errno,
-              strerror(errno));
+      fprintf(stderr, "Error in file read/write on line %d", 
+              __LINE__, errno, strerror(errno));
       exit(EXIT_FAILURE);
     }
 
