@@ -1,27 +1,65 @@
 #include "msString.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
+msString msSetString(char *str) {
+  size_t len = strlen(str); /* Not including null char */
 
-void readBytes(void *ptr, int numBytes) {
-  printf("Starting at memory address %p:\n", ptr);
-
-  int i;
-  for (i = 1; i <= numBytes; i++) {
-    /*printf("%03d: %4hhu (%c)\n", i, *(char*)ptr,*(char*)ptr); */
-    printf("%03d: %4hhu\n", i, *(char *)ptr);
-    /* ^^ The return format type is not defined so I used unsigned char */
-    ptr += 1;
+  msString newStr;
+  if (!(newStr = malloc(sizeof(long) + len))) {
+    msError("Error in memmory allocation");
   }
+
+  memcpy((newStr), &len, sizeof(long));
+  memcpy((newStr + sizeof(long)), str, len);
+  /* memcpy avoids copying over the null char vs strcpy */
+
+  /*
+  I would use structs, however the requirements say that it
+  should point to long int, char[] instead of long int, *char, char[]:
+
+  struct msStringStruct {
+    long int len;
+    char *str;
+  }
+  */
+
+  return newStr;
 }
 
+char* msGetString(msString ptr) {
+  long len = msLength(ptr);
 
-extern msString msSetString(char *string) {
-    
+  char *str;
+  if (!(str = malloc(len+1))) {
+    msError("Error in memmory allocation");
+  }
+
+  memcpy(str, ptr+sizeof(long), len);
+
+  return str;
 }
 
-extern char *msGetString(msString);
-extern void msCopy(msString *, msString);
-extern void msConcatenate(msString *, msString);
-extern long int msLength(msString);
-extern int msCompare(msString, msString);
-extern int msCompareString(msString, char *);
-static void msError(char *);
+void msCopy(msString *dest, msString src) {
+  if (!(*dest = malloc(sizeof(long) + msLength(src)))) {
+    msError("Error in memory allocation for copy");
+  }
+
+  memcpy(*dest, src, sizeof(long) + msLength(src));
+}
+
+void msConcatenate(msString *string1, msString string2) {}
+
+long int msLength(msString ptr) { 
+  return *(long *)ptr;
+}
+
+int msCompare(msString string1, msString string2) { return 1; }
+
+int msCompareString(msString string1, char *string2) { return 1; }
+
+void msError(char *errMsg) {
+  fprintf(stderr, "Err:%s\n", errMsg);
+  exit(EXIT_FAILURE);
+}

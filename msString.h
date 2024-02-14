@@ -1,5 +1,3 @@
-/* 07-Feb-2024: updated the return value for the msLength function to be long int */
-
 #ifndef __MSSTRING__
 #define __MSSTRING__
 

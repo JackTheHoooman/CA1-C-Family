@@ -1,5 +1,4 @@
-/* #include <limits.h> */
-/*#include "msString.h"*/
+#include "msString.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -11,16 +10,17 @@ To allow for large files and decrease IO opertations: they are read in chunks.
 I thought it would be more interesting than doing it char by char / reading the
 entire thing but that functionality can be done by this i guess?
 
-I have tested it with files up to 5gb on a poor raspberry pi.
-Use head/tail to view a file like that. Do not use vim, i learnt the hard way.
-Also change the block/chunk size if you do or it will take a while.
+I have tested it with files up to 5gb (with multiple lines) on a poor raspberry
+pi. Use head/tail to view a file like that. Do not use vim, i learnt the hard
+way. Also change the block/chunk size if you do or it will take a while.
 */
 
 void printBytes(void *ptr, int numBytes);
 
 void reverseArrayC(char *arr, int len);
 
-void reverseFile(char *inFile[],char *outFile[]); /* Calls reverseFileByChunk */
+void reverseFile(char *inFile[],
+                 char *outFile[]); /* Calls reverseFileByChunk */
 void reverseFileByChunk(char *inFile[], char *outFile[], int chunkSize);
 
 int main(int argc, char **argv) {
@@ -70,33 +70,49 @@ int main(int argc, char **argv) {
   } else {
     fprintf(stderr,
             "Wrong number of arguments for task 2. At least 2 should be "
-            "provided:\n- %s inFile outFile\n- %s inFile outFile chunkSize\n",
+            "provided:\n- %s inFile outFile\n- %s inFile outFile "
+            "chunkSize(bytes)\n",
             argv[0], argv[0]);
   }
 
   printf("\n--- Task 3 ---\n");
 
-  /*msString ms = msSetString(" Hello ");
-  msString ms2 = msSetString(" World !");
+  msString ms = msSetString("Hello");
+  msString ms2 = msSetString("World!");
   msString mscopy = NULL;
 
-  printf(" String |%s | is %d characters long (%p ).\n ", msGetString(ms),
-         msLength(ms), ms);
-  msCopy(&mscopy, ms);
-  printf(" Copied string |%s | is %d characters long (%p ).\n ",
-         msGetString(mscopy), msLength(mscopy), mscopy);
+  char *tempString = msGetString(ms);
+  printf(" String |%s| is %li characters long (%p).\n ", tempString,
+         msLength(ms), &ms);
+  free(tempString);
+  /*
+  Since msGetString must use malloc to create a char[] with a null char
+  it must be freed
+  */
 
-  printf(" Compare ms with mscopy : %d \n ", msCompare(ms, mscopy));
-  printf(" Compare ms with ms2 : %d \n ", msCompare(ms, ms2));
-  printf(" Compare ms with Hello : %d \n ", msCompareString(ms, " Hello "));
-  printf(" Compare ms with HelloX : %d \n ", msCompareString(ms, " HelloX "));
-  printf(" Compare ms with Hella : %d \n ", msCompareString(ms, " Hella "));
+  msCopy(&mscopy, ms);
+  tempString = msGetString(mscopy);
+  printf(" Copied string |%s| is %li characters long (%p).\n ", tempString,
+         msLength(mscopy), mscopy);
+  free(tempString);
+
+  printf(" Compare ms with mscopy : %li \n ", msCompare(ms, mscopy));
+  /*
+  printf(" Compare ms with ms2 : %li \n ", msCompare(ms, ms2));
+  printf(" Compare ms with Hello : %li \n ", msCompareString(ms, " Hello "));
+  printf(" Compare ms with HelloX : %li \n ", msCompareString(ms, " HelloX "));
+  printf(" Compare ms with Hella : %li \n ", msCompareString(ms, " Hella "));
 
   msConcatenate(&mscopy, ms2);
-  printf(" Concatenated string |%s | is %d characters long (%p ).\n ",
-         msGetString(mscopy), msLength(mscopy), mscopy);*/
+  tempString = msGetString(mscopy);
+  printf(" Concatenated string |%s| is %d characters long (%p).\n ", tempString,
+         msLength(mscopy), mscopy);
 
-  
+  free(tempString);
+  */
+  free(ms);
+  free(ms2);
+  free(mscopy);
 
   return 0;
 }
@@ -104,7 +120,7 @@ int main(int argc, char **argv) {
 void printBytes(void *ptr, int numBytes) {
   printf("Starting at memory address %p:\n", ptr);
 
-  int i;
+  int i; /* The example starts at 001 */
   for (i = 1; i <= numBytes; i++) {
     /*printf("%03d: %4hhu (%c)\n", i, *(char*)ptr,*(char*)ptr); */
     printf("%03d: %4hhu\n", i, *(char *)ptr);
