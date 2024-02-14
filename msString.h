@@ -1,10 +1,11 @@
+/* 07-Feb-2024: updated the return value for the msLength function to be long int */
+
 #ifndef __MSSTRING__
 #define __MSSTRING__
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
 
 typedef void * msString;
 

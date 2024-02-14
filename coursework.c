@@ -1,6 +1,8 @@
 #include "msString.h"
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #ifndef DEFAULT_CHUNK_SIZE
 #define DEFAULT_CHUNK_SIZE 2048
@@ -53,14 +55,9 @@ int main(int argc, char **argv) {
   } else if (argc >= 4) {
     int chunkSize;
     if (sscanf(argv[3], "%i", &chunkSize) != 1 || chunkSize < 1) {
-      perror("Error with chunk size");
+      fprintf(stderr, "Error with chunk size on line %d\nError : %d :\n%s", __LINE__, errno,
+              strerror(errno));
       exit(1);
-      /*
-      This provides more error information than the example used in lecture.
-      It also works still with:
-      $ ./coursework infile.txt outfile.txt >output.lis 2>err.lis
-      Since is does send error messages to sterr.
-      */
     } else {
       printf("Input file is : '%s' \nOutput file is : '%s'\n\n", argv[1],
              argv[2]);
@@ -69,9 +66,9 @@ int main(int argc, char **argv) {
 
   } else {
     fprintf(stderr,
-            "Wrong number of arguments for task 2. At least 2 should be "
-            "provided:\n- %s inFile outFile\n- %s inFile outFile "
-            "chunkSize(bytes)\n",
+            "Wrong number of arguments for task 2. Either use:\n"
+            "- %s inFile outFile\n"
+            "- %s inFile outFile chunkSize(bytes)\n",
             argv[0], argv[0]);
   }
 
@@ -161,12 +158,11 @@ void reverseFileByChunk(char *inFile[], char *outFile[], int chunkSize) {
   FILE *inFStrseam = fopen(*inFile, "r");
   FILE *outFStream = fopen(*outFile, "w"); /* Will create if not exist */
 
-  if (inFStrseam == NULL ||
-      outFStream ==
-          NULL) { /* The lack of standardisation with C errors is ridiculous */
-    perror("Error opening files");
+  if (inFStrseam == NULL || outFStream == NULL) {
+    /* The lack of standardisation with C errors is ridiculous */
+    fprintf(stderr, "Error opening files on line %d\nError : %d :\n%s", __LINE__, errno,
+            strerror(errno));
     exit(EXIT_FAILURE);
-    /* "graceful exit": it closes any open streams */
   }
 
   fseek(inFStrseam, 0,
@@ -179,7 +175,8 @@ void reverseFileByChunk(char *inFile[], char *outFile[], int chunkSize) {
 
   char *chunk;
   if (!(chunk = (char *)malloc(position < chunkSize ? position : chunkSize))) {
-    perror("Error in assignment of chunk");
+    fprintf(stderr, "Error in assignment of chunk on line %d\nError : %d :\n%s", __LINE__, errno,
+            strerror(errno));
     exit(EXIT_FAILURE);
   }
 
@@ -198,7 +195,8 @@ void reverseFileByChunk(char *inFile[], char *outFile[], int chunkSize) {
     int bytesWritten = fwrite(chunk, 1, bytesRead, outFStream);
 
     if (bytesRead != bytesWritten) {
-      perror("Error in file read/write");
+      fprintf(stderr, "Error in file read/write on line %d\nError : %d :\n%s", __LINE__, errno,
+              strerror(errno));
       exit(EXIT_FAILURE);
     }
 

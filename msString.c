@@ -34,6 +34,7 @@ char *msGetString(msString ptr) {
   }
 
   memcpy(str, ptr + sizeof(long), len);
+  *(str + len) = '\0';
 
   return str;
 }
@@ -50,11 +51,11 @@ void msConcatenate(msString *dest, msString ptr2) {
   long destLen = msLength(*dest);
   long ptr2Len = msLength(ptr2);
 
-  if ((ptr2Len > 0 && destLen > LONG_MAX - ptr2Len) ||
-      (destLen > 0 && ptr2Len > LONG_MAX - destLen)) {
+  /* I would use below but we are not allowed to change definitions to add limits.h 
+  if ((ptr2Len > 0 && destLen > LONG_MAX - ptr2Len) || (destLen > 0 &&ptr2Len > LONG_MAX - destLen)) { 
     msError("Resultant string from concatenation is > long int");
-    /*  The requirements should have been unsigned long int */
   }
+  The requirements should also be for UNSIGNED long int */
 
   long len = destLen + ptr2Len;
 
@@ -111,4 +112,7 @@ int msCompareString(msString ptr, char *str) {
 void msError(char *errMsg) {
   fprintf(stderr, "Err:%s\n", errMsg);
   exit(EXIT_FAILURE);
+
+  /* Would also use errno like in the main file but definitions can not be
+   * changed */
 }
