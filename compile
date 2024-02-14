@@ -25,4 +25,4 @@ gcc -ansi -o ${1} ${2}.o ${1}.o
   # fi
 # }
 #
-# I kept using autocomplete, which added the .c
+# I kept using autocomplete, which added the .c/.
