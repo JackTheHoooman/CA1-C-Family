@@ -1,7 +1,4 @@
 #include "msString.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 msString msSetString(char *str) {
   size_t len = strlen(str); /* Not including null char */
@@ -28,15 +25,15 @@ msString msSetString(char *str) {
   return newStr;
 }
 
-char* msGetString(msString ptr) {
+char *msGetString(msString ptr) {
   long len = msLength(ptr);
 
   char *str;
-  if (!(str = malloc(len+1))) {
+  if (!(str = malloc(len + 1))) {
     msError("Error in memmory allocation");
   }
 
-  memcpy(str, ptr+sizeof(long), len);
+  memcpy(str, ptr + sizeof(long), len);
 
   return str;
 }
@@ -49,11 +46,32 @@ void msCopy(msString *dest, msString src) {
   memcpy(*dest, src, sizeof(long) + msLength(src));
 }
 
-void msConcatenate(msString *string1, msString string2) {}
+void msConcatenate(msString *dest, msString ptr2) {
+  long destLen = msLength(*dest);
+  long ptr2Len = msLength(ptr2);
 
-long int msLength(msString ptr) { 
-  return *(long *)ptr;
+  if ((ptr2Len > 0 && destLen > LONG_MAX - ptr2Len) ||
+      (destLen > 0 && ptr2Len > LONG_MAX - destLen)) {
+    msError("Resultant string from concatenation is > long int");
+    /*  The requirements should have been unsigned long int */
+  }
+
+  long len = destLen + ptr2Len;
+
+  msString newStr;
+  if (!(newStr = malloc(sizeof(long) + len))) {
+    msError("Error in memmory allocation");
+  }
+
+  memcpy(newStr, &len, sizeof(long));
+  memcpy((newStr + sizeof(long)), (*dest + sizeof(long)), destLen);
+  memcpy((newStr + sizeof(long) + destLen), (ptr2 + sizeof(long)), ptr2Len);
+
+  free(*dest);
+  *dest = newStr;
 }
+
+long int msLength(msString ptr) { return *(long *)ptr; }
 
 int msCompare(msString ptr1, msString ptr2) {
   long int i;
@@ -65,7 +83,7 @@ int msCompare(msString ptr1, msString ptr2) {
   char *ptr2Str = ptr2 + sizeof(long);
 
   for (i = 0; i <= msLength(ptr1); i++) {
-    if (*(ptr1Str+i) != *(ptr2Str+i)) {
+    if (*(ptr1Str + i) != *(ptr2Str + i)) {
       return 1;
     }
   }
@@ -82,7 +100,7 @@ int msCompareString(msString ptr, char *str) {
   char *ptrStr = ptr + sizeof(long);
   long int i;
   for (i = 0; i <= ptrLen; i++) {
-    if (*(ptrStr+i) != *(str+i)) {
+    if (*(ptrStr + i) != *(str + i)) {
       return 1;
     }
   }

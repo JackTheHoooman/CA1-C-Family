@@ -102,24 +102,23 @@ int main(int argc, char **argv) {
   free(tempString);
 
   printf("Compare ms with mscopy : %s \n",
-         (msCompare(ms, mscopy) ? "True" : "False"));
+         (msCompare(ms, mscopy) ? "False (1)" : "True (0)"));
+  /*printf("Compare ms with mscopy : %d \n",msCompare(ms, mscopy));*/
   printf("Compare ms with ms2 : %s \n",
-         (msCompare(ms, ms2) ? "True" : "False"));
+         (msCompare(ms, ms2) ? "False (1)" : "True (0)"));
   printf("Compare ms with Hello : %s \n",
-         (msCompareString(ms, "Hello")) ? "True" : "False");
+         (msCompareString(ms, "Hello")) ? "False (1)" : "True (0)");
   printf("Compare ms with HelloX : %s \n",
-         (msCompareString(ms, "HelloX") ? "True" : "False"));
+         (msCompareString(ms, "HelloX") ? "False (1)" : "True (0)"));
   printf("Compare ms with Hella : %s \n",
-         (msCompareString(ms, "Hella") ? "True" : "False"));
-  /*
+         (msCompareString(ms, "Hella") ? "False (1)" : "True (0)"));
 
   msConcatenate(&mscopy, ms2);
   tempString = msGetString(mscopy);
-  printf(" Concatenated string |%s| is %d characters long (%p).\n ", tempString,
+  printf("Concatenated string |%s| is %li characters long (%p).\n ", tempString,
          msLength(mscopy), mscopy);
 
   free(tempString);
-  */
   free(ms);
   free(ms2);
   free(mscopy);
