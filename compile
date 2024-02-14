@@ -1,19 +1,27 @@
 #!/usr/bin/env bash
 
+# ./compile coursework msString
+gcc -ansi -c ${2}.c -o ${2}.o
 gcc -ansi -c ${1}.c -o ${1}.o
-gcc ${1}.o -o ${1}
+gcc -ansi -o ${1} ${2}.o ${1}.o
 
 # Why are you looking in here? 0.o
-# For development I used this:
+# For development I used somthing like this:
 # 
 # function compile () {
-  # if [[ "${1}" != *.c ]] && [[ "${1}" != *.o ]]; then
+  # if (($# == 1)); then
+    # if [[ "${1}" != *.c ]] && [[ "${1}" != *.o ]]; then
+      # gcc -ansi -c ${1}.c -o ${1}.o
+      # gcc ${1}.o -o ${1}
+    # else 
+      # echo "You left the .c on again"
+      # gcc -ansi -c ${1:0:-2}.c -o ${1:0:-2}.o
+      # gcc ${1:0:-2}.o -o ${1:0:-2}
+    # fi
+  # else
+    # gcc -ansi -c ${2}.c -o ${2}.o
     # gcc -ansi -c ${1}.c -o ${1}.o
-    # gcc ${1}.o -o ${1}
-  # else 
-    # echo "You left the .c/o on again"
-    # gcc -ansi -c ${1:0:-2}.c -o ${1:0:-2}.o
-    # gcc ${1:0:-2}.o -o ${1:0:-2}
+    # gcc -ansi -o ${1} ${2}.o ${1}.o
   # fi
 # }
 #

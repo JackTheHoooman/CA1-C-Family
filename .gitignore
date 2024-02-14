@@ -1,4 +1,4 @@
 coursework
-coursework.o
+*.o
 inFile.txt
 outFile.txt
