@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
 
 # ./compile coursework msString
-gcc -ansi -c ${2}.c -o ${2}.o
-gcc -ansi -c ${1}.c -o ${1}.o
-gcc -ansi -o ${1} ${2}.o ${1}.o
+if (($# == 0)); then
+  gcc -ansi -c msString.c -o msString.o
+  gcc -ansi -c coursework.c -o coursework.o
+  gcc -ansi -o coursework msString.o coursework.o
+else 
+  gcc -ansi -c ${2}.c -o ${2}.o
+  gcc -ansi -c ${1}.c -o ${1}.o
+  gcc -ansi -o ${1} ${2}.o ${1}.o
+fi
 
-# Why are you looking in here? 0.o
 # For development I used somthing like this:
 # 
 # function compile () {
