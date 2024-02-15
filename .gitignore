@@ -1,4 +1,3 @@
 coursework
 *.o
-inFile.txt
-outFile.txt
+*.txt

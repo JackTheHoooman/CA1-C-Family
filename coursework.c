@@ -1,8 +1,9 @@
 #include "msString.h"
-#include <errno.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #ifndef DEFAULT_CHUNK_SIZE
 #define DEFAULT_CHUNK_SIZE 2048
@@ -89,8 +90,7 @@ int main(int argc, char **argv) {
   msString mscopy = NULL;
 
   char *tempString = msGetString(ms);
-  printf("String        (ms) |%s| is %li characters long (%p).\n", 
-          tempString, msLength(ms), &ms);
+  printf("String        (ms) |%s| is %li characters long (%p).\n", tempString, msLength(ms), &ms);
   free(tempString);
   /*
   Since msGetString must use malloc to create a char[] with a null char
@@ -99,13 +99,11 @@ int main(int argc, char **argv) {
 
   msCopy(&mscopy, ms);
   tempString = msGetString(mscopy);
-  printf("Copied string (mscopy) |%s| is %li characters long (%p).\n",
-         tempString, msLength(mscopy), mscopy);
+  printf("Copied string (mscopy) |%s| is %li characters long (%p).\n", tempString, msLength(mscopy), mscopy);
   free(tempString);
 
   tempString = msGetString(ms2);
-  printf("Second string (ms2) |%s| is %li characters long (%p) \n", 
-          tempString, msLength(ms2), ms2);
+  printf("Second string (ms2) |%s| is %li characters long (%p) \n", tempString, msLength(ms2), ms2);
   free(tempString);
 
   printf("Compare ms with mscopy : %s \n", (msCompare(ms, mscopy) ? "False (1)" : "True (0)"));
@@ -116,10 +114,9 @@ int main(int argc, char **argv) {
   printf("Compare ms with Hella : %s \n", (msCompareString(ms, "Hella") ? "False (1)" : "True (0)"));
 
   msConcatenate(&mscopy, ms2);
-  /* Possible memory leak handeled in here */
+  /* ^^ Possible memory leak handeled in here */
   tempString = msGetString(mscopy);
-  printf("Concatenated string |%s| is %li characters long (%p).\n ", tempString,
-         msLength(mscopy), mscopy);
+  printf("Concatenated string |%s| is %li characters long (%p).\n ", tempString, msLength(mscopy), mscopy);
   free(tempString);
 
   free(ms);
@@ -146,15 +143,21 @@ void printBytes(void *ptr, int numBytes) {
 
 
 void reverseArrayC(char *arr, int len) {
+  /* 
+  This is not very efficient but I could not find a way to write to memory in reverse 
+  except doing lots of small IO
+  I make no claim to one always being more efficient generally but this was better for me
+  */
+
   int i = len - 1; /* End index */
   int j = 0;       /* Start index */
 
   while (i > j) {
-    char swap = arr[i]; /* arr[i], arr[j] = arr[j], arr[i] */
+    char swap = arr[i];
     arr[i] = arr[j];
     arr[j] = swap;
     i--;
-    j++; /* moves the indexes closer */
+    j++;
   }
 }
 
