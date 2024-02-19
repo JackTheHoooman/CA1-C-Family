@@ -186,7 +186,7 @@ void reverseFileByChunk(char *inFile[], char *outFile[], int chunkSize) {
          ((position + (chunkSize - 1)) / chunkSize));
 
   char *chunk;
-  if (!(chunk = (char *)malloc(position < chunkSize ? position : chunkSize))) {
+  if (!(chunk = (char *)malloc((position < chunkSize ? position : chunkSize) * sizeof(char)))) {
     fprintf(stderr, "Error in assignment of chunk on line %d", 
             __LINE__, errno, strerror(errno));
     exit(EXIT_FAILURE);
